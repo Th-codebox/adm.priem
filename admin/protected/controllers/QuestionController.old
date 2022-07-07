@@ -1,0 +1,291 @@
+<?php
+
+class QuestionController extends Controller
+{
+
+	/**
+	 * @var CActiveRecord the currently loaded data model instance.
+	 */
+	private $_model;
+
+	/**
+	 * @return array action filters
+	 */
+	public function filters()
+	{
+		return array(
+			'accessControl', // perform access control for CRUD operations
+		);
+	}
+
+	/**
+	 * Specifies the access control rules.
+	 * This method is used by the 'accessControl' filter.
+	 * @return array access control rules
+	 */
+	public function accessRules()
+	{
+		return array(
+			array('allow',  //
+				'actions'=>array('index','view','create','admin','delete','update','stat'),
+				'roles'=>array('moderator'),
+			),
+			array('allow',  //
+				'actions'=>array('index','admin','update','view'),
+				'roles'=>array('operator'),
+			),
+			array('deny',  // deny all users
+				'users'=>array('*'),
+			),
+		);
+	}
+
+	/**
+	 * Displays a particular model.
+	 */
+	public function actionView()
+	{
+		$this->render('view',array(
+			'model'=>$this->loadModel(),
+		));
+
+	}
+
+	public function actionStat()
+	{
+		$model = new StatForm;
+
+        $rubrs = CHtml::listData(Section::model()->findAll('ACTIVE="Y"'), 'ID', 'NAME');
+		$rubrs[0]='';
+		ksort($rubrs);
+
+		if(isset($_POST['StatForm']))
+		{
+			$model->attributes=$_POST['StatForm'];
+			if($model->validate()) {
+
+			    $filter = array();
+				$params = array();
+				
+				if ($model->pol) {
+			        array_push($filter,"`POL` = :pol");   
+					$params[':pol']=$model->pol;
+				}
+				if ($model->rubr) {
+			        array_push($filter,"`RUBR` = :rubr");   
+					$params[':rubr']=$model->rubr;
+				}
+				if ($model->date1) {
+			        array_push($filter,"DATE(`PUBLISH_TIME`) >= :date1");   
+					$params[':date1']=join('-', array_reverse(explode('.', $model->date1)));
+				}
+				if ($model->date2) {
+			        array_push($filter,"DATE(`PUBLISH_TIME`) <= :date2");   
+					$params[':date2']=join('-', array_reverse(explode('.', $model->date2)));
+				}
+
+				$questions=Question::model()->findAll(
+					array(
+						'condition'=>join(' and ', $filter),
+						'params'=>$params,
+                    )
+				);
+			}
+			else {
+				$questions = array();
+			}	
+		}
+		else {
+			$questions = array();
+		}
+
+		$this->render('stat',array(
+			'model'=>$model,
+			'rubrs'=>$rubrs,
+			'questions'=>$questions
+		));
+	}
+
+	/**
+	 * Creates a new model.
+	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 */
+	public function actionCreate()
+	{
+		$model=new Question;
+
+        $rubrs = CHtml::listData(Section::model()->findAll('ACTIVE="Y"'), 'ID', 'NAME');
+        $operators = CHtml::listData(User::model()->findAll('STATUS=3 and ACTIVE=1'), 'ID', 'NAME');
+
+		if(isset($_POST['Question']))
+		{
+			$model->attributes=$_POST['Question'];
+			if($model->save())
+				$this->redirect(array('index'));
+		}
+
+		$this->render('create',array(
+			'model'=>$model, 'rubrs'=>$rubrs, 'operators'=>$operators
+		));
+	}
+
+	/**
+	 * Updates a particular model.
+	 * If update is successful, the browser will be redirected to the 'view' page.
+	 */
+	public function actionUpdate()
+	{
+		$model=$this->loadModel();
+		#$oldPassword = $model->USER_PASSWORD;
+
+        $rubrs = CHtml::listData(Section::model()->findAll('ACTIVE="Y"'), 'ID', 'NAME');
+        $members = CHtml::listData(Members::model()->findAll('active=1'), 'id', 'name');
+
+        $operators = CHtml::listData(User::model()->findAll('STATUS=3 and ACTIVE=1'), 'ID', 'NAME');
+		$operators[0] = '';
+		ksort($operators); 
+
+		if(isset($_POST['Question']))
+		{
+			$model->attributes=$_POST['Question'];
+			$model->PUBLISH_TIME = join('-', array_reverse(explode('.', $model->PUBLISH_TIME)));
+			$password = $model->USER_PASSWORD;
+            #$model->USER_PASSWORD = ($model->USER_PASSWORD == '****') ? $oldPassword : md5($model->USER_PASSWORD);
+
+			if($model->save())
+
+				if($_POST['COMMENT']) {
+                   $model_comment = new Comments;  
+				   $model_comment->operator = $model->OPERATOR;	
+				   $model_comment->question = $model->ID;	
+				   $model_comment->create_time = new CDbExpression('NOW()');
+				   $model_comment->description = $_POST['COMMENT'];	
+				   $model_comment->create_by = YII::app()->user->Id;	
+				   $model_comment->save();
+				}
+
+				if($_POST['KEYWORDS']) {
+					$model->setTags($_POST['KEYWORDS'])->save();
+				}
+
+				if ($model->SYSTEM_STATUS==5 && $model->SEND_EMAIL==1 && $model->EMAIL && $model->STATUS==1) {
+					$headers="From: ".Yii::app()->params['adminEmail']."\r\nReply-To: From: ".Yii::app()->params['adminEmail']."\r\n";
+					$headers .= "Content-type: text/html; charset=utf-8\r\n";
+					$text=$this->renderPartial('client_mail',array('model'=>$model,'password'=>$password),true);
+					mail($model->EMAIL,Yii::app()->params['EmailClientSubject'],$text,$headers);
+				}
+
+				if ($model->SYSTEM_STATUS==5 && $model->EMAIL && $model->STATUS==0) {
+					$headers="From: ".Yii::app()->params['adminEmail']."\r\nReply-To: From: ".Yii::app()->params['adminEmail']."\r\n";
+					$headers .= "Content-type: text/html; charset=utf-8\r\n";
+					$text=$this->renderPartial('client_mail',array('model'=>$model,'password'=>$password),true);
+					mail($model->EMAIL,Yii::app()->params['EmailClientSubject'],$text,$headers);
+				}
+
+				$this->redirect(array('index'));
+		}
+		else {
+           #$model->USER_PASSWORD='****';
+		}
+
+        $user=User::model()->find(array('select'=>'STATUS','condition'=>'ID='.YII::app()->user->id));
+ 
+        $comments = Comments::model()->findAll(
+			array(
+				'condition'=>'`operator` = :operator and `question` = :question',
+				'order'=>'`create_time` desc',
+				'params'=>array(':operator'=>$model->OPERATOR,':question'=>$model->ID)
+			));
+
+		$tags = $model->getTags();
+        $keywords="";
+		foreach($tags as $tag){
+			$keywords=$keywords.$tag.", ";
+		}
+		$keywords=substr($keywords,0,strlen($keywords)-2);
+
+		$this->render('update',array(
+			'model'=>$model, 
+			'rubrs'=>$rubrs, 
+			'operators'=>$operators, 
+			'status'=>$user->STATUS, 
+			'members'=>$members, 
+			'comments'=>$comments,
+			'keywords'=>$keywords
+		));
+	}
+
+	/**
+	 * Deletes a particular model.
+	 * If deletion is successful, the browser will be redirected to the 'index' page.
+	 */
+	public function actionDelete()
+	{
+		if(Yii::app()->request->isPostRequest)
+		{
+			// we only allow deletion via POST request
+			$this->loadModel()->delete();
+
+			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
+			if(!isset($_POST['ajax']))
+				$this->redirect(array('index'));
+		}
+		else
+			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
+	}
+
+	/**
+	 * Manages all models.
+	 */
+	public function actionIndex()
+	{
+		$criteria = new CDbCriteria();		
+		
+		$mode = intval($_GET['mode']);
+		if (!$mode) {
+			if (Yii::app()->user->role == 'operator') {
+				$criteria->addSearchCondition('SYSTEM_STATUS',1);
+			}
+			elseif (Yii::app()->user->role == 'moderator') {
+				$criteria->addSearchCondition('SYSTEM_STATUS',0);
+			}
+		}
+		elseif ($mode == 6) {
+ 
+		}
+		else {
+			$criteria->addSearchCondition('SYSTEM_STATUS',$mode);
+		}
+
+		if (Yii::app()->user->role == 'operator') {
+			$criteria->addSearchCondition('OPERATOR',Yii::app()->user->id);
+		}
+
+		$dataProvider=new CActiveDataProvider('Question', array(
+			'criteria'=> $criteria,
+			'pagination'=>array('pageSize'=>Yii::app()->params['pageSize']),
+		));
+
+		$this->render('admin',array(
+			'dataProvider'=>$dataProvider,
+			'mode'=>$mode,
+		));
+	}
+
+	/**
+	 * Returns the data model based on the primary key given in the GET variable.
+	 * If the data model is not found, an HTTP exception will be raised.
+	 */
+	public function loadModel()
+	{
+		if($this->_model===null)
+		{
+			if(isset($_GET['id']))
+				$this->_model=Question::model()->findbyPk($_GET['id']);
+			if($this->_model===null)
+				throw new CHttpException(404,'The requested page does not exist.');
+		}
+		return $this->_model;
+	}
+}
+ 

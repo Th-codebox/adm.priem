@@ -1,0 +1,79 @@
+<?php
+$this->breadcrumbs=array(
+	'Questions'=>array('index'),
+	'Manage',
+);
+?>
+<h1>Обращения</h1>
+
+<ul class="actions">
+	<!--li><?php echo CHtml::link('Не обработанные',array('index')); ?></li-->
+
+<?php if (Yii::app()->user->role == 'moderator'): ?>
+	<li><?php echo CHtml::link('Статистика',array('stat')); ?></li>
+	<!--li><?php echo CHtml::link('Moderate',array('control')); ?></li-->
+<?php endif ?>
+
+</ul>
+
+<div class="form">
+
+
+<table width="70%" cellpadding="3">
+
+<col width="30%" />
+<col width="2%" />
+<col width="68%" />
+<col width="2%" />
+
+<?php echo CHtml::beginForm(); ?>
+
+	<?php echo CHtml::errorSummary($model); ?>
+
+
+<tr>
+  <td>Рубрика:</td>
+  <td></td>
+  <td><?php echo CHtml::activeDropDownlist($model,'rubr',$rubrs); ?></td>
+  <td></td>
+</tr>
+<tr>
+  <td>Пол:</td>
+  <td></td>
+  <td><?php echo CHtml::activeDropDownlist($model,'pol',array(''=>'','M'=>'М','F'=>'Ж'),array('style'=>'width:70px;')); ?></td>
+  <td></td>
+</tr>
+<tr>
+  <td>Дата1:</td>
+  <td></td>
+  <td><?php echo CHtml::activeTextField($model,'date1',array('class'=>'textfield datepicker','style'=>'width:70px;')); ?></td>
+  <td></td>
+</tr>
+<tr>
+  <td>Дата2</td>
+  <td></td>
+  <td><?php echo CHtml::activeTextField($model,'date2',array('class'=>'textfield datepicker','style'=>'width:70px;')); ?></td>
+  <td></td>
+</tr>
+<tr>
+  <td><?php echo CHtml::submitButton('Показать'); ?></td>
+  <td></td>
+  <td></td>
+  <td></td>
+</tr>
+</table>
+
+
+<?php echo CHtml::endForm(); ?>
+
+</div>
+
+<?php 
+	foreach ($questions as $record) {
+?>
+			<div><b>Вопрос:</b> <?php echo $record->DESCRIPTION;?></div>
+			<div><b>Ответ:</b> <?php echo $record->ANSWER;?></div>
+      <br />
+<?php 
+	}
+?>

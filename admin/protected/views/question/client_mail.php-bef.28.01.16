@@ -1,0 +1,9 @@
+<html>
+	<head>
+		<title>Интернет Приёмная</title>
+	</head>
+	<body>   
+		<p>От интернет приёмной на ваш вопрос "<?php echo $model->DESCRIPTION;?>" поступил ответ:</p>
+		<p><?php echo $model->ANSWER_FOR_EMAIL;?></p>	
+	</body>   
+</html>  

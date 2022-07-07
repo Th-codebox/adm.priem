@@ -1,0 +1,82 @@
+
+HOME             = /web/static/admpriem/admin/protected/data/CA
+RANDFILE         = /web/static/admpriem/admin/protected/data/CA/.rnd
+dir	             = /web/static/admpriem/admin/protected/data/CA
+certs            = /web/static/admpriem/admin/protected/data/CA/certs
+crl_dir	         = /web/static/admpriem/admin/protected/data/CA/crl
+database         = /web/static/admpriem/admin/protected/data/CA/index
+new_certs_dir    = /web/static/admpriem/admin/protected/data/CA/newcerts
+private_dir      = /web/static/admpriem/admin/protected/data/CA/private
+serial           = /web/static/admpriem/admin/protected/data/CA/serial
+certificate      = /web/static/admpriem/admin/protected/data/CA/cacert.pem
+crl              = /web/static/admpriem/admin/protected/data/CA/crl/cacrl.pem
+private_key      = /web/static/admpriem/admin/protected/data/CA/cakey.pem
+crl_extentions	 = crl_ext
+default_days     = 365
+default_crl_days = 30
+preserve         = no
+default_md       = md5
+
+[ req ]
+default_bits        = 
+string_mask         = nombstr
+prompt              = no
+distinguished_name  = req_name
+req_extensions      = req_ext
+
+[ req_name ]
+C=
+ST=
+L=
+0.O=
+OU=
+CN=
+emailAddress=
+
+[ ca ]
+default_ca             = email_cert
+
+[ email_cert ]
+x509_extensions        = email_ext
+default_days           = 365
+policy                 = policy_supplied
+
+[ server_cert ]
+x509_extensions        = server_ext
+default_days           = 1095
+policy                 = policy_supplied
+
+[ policy_supplied ]
+countryName            = supplied
+stateOrProvinceName    = supplied
+localityName           = supplied
+organizationName       = supplied
+organizationalUnitName = supplied
+commonName             = supplied
+emailAddress           = supplied
+
+[ req_ext]
+basicConstraints = CA:false
+
+[ crl_ext ]
+issuerAltName=issuer:copy
+authorityKeyIdentifier=keyid:always,issuer:always
+
+[ email_ext ]
+basicConstraints       = critical, CA:false
+keyUsage               = critical, nonRepudiation, digitalSignature, keyEncipherment
+extendedKeyUsage       = critical, emailProtection, clientAuth
+nsCertType             = critical, client, email
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid:always, issuer:always
+subjectAltName         = email:copy
+issuerAltName          = issuer:copy
+
+[ server_ext ]
+basicConstraints        = critical, CA:false
+keyUsage                = critical, digitalSignature, keyEncipherment
+nsCertType              = critical, server
+extendedKeyUsage        = critical, serverAuth
+subjectKeyIdentifier    = hash
+authorityKeyIdentifier  = keyid:always, issuer:always
+issuerAltName           = issuer:copy

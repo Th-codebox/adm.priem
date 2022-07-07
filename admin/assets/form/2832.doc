@@ -1,0 +1,110 @@
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><style type="text/css">body 
+{
+    font-family:Calibri;
+}
+
+.dt 
+{
+    border-collapse:collapse;
+    width: 100%;
+}
+.dt td
+{
+    border: 1px #000000 solid;
+    text-align: left;
+    vertical-align: top;
+}
+.th
+{
+    background-color: #eeeeee;
+}
+.fr
+{
+    width: 30%;
+}
+
+.headingcenter1
+{
+    font-size:14pt;
+    font-weight:bold;
+    text-align:center;
+    
+}
+.usual1
+{
+    font-size:12pt;
+    text-align: left;
+    margin-bottom:10pt;
+}
+.usual2
+{
+    font-size:12pt;
+    text-align: left;
+    margin-bottom:10pt;
+    margin-left:23pt;
+}
+
+.margleft1
+{
+     padding-left:20pt;
+}
+
+.commissionTable
+{
+     /*margin-left:30pt;*/
+     width:100%;
+      
+}
+.commissionTable tr
+{
+    border-collapse:collapse;
+          
+}
+.commissionTable td
+{
+    vertical-align:top;
+    font-size:12pt;
+    text-align: left;
+    border-style:none;
+}
+.requests
+{
+     margin-left:23pt;
+     width:90%;
+ 
+}
+.requests td
+{
+    vertical-align:top;
+    font-size:12pt;
+    text-align: left;
+}
+.margtab1
+{
+     margin-left:23pt;
+}</style><!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]--><!--@page Section1   {size:8.5in 11.0in;  margin:1.0in 1.25in 1.0in 1.25in ;   mso-header-margin:.5in;    mso-footer-margin:.5in; mso-paper-source:0;} div.Section1{page:Section1;}--><meta http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body><?xml version="1.0" encoding="utf-16"?><h2>
+					Отказ в допуске к участию в аукционе
+				</h2><div><table class="dt" width="900px"><tr><td class="th" colspan="2">
+            Предмет контракта
+          </td></tr><tr><td width="300px">
+            Код закупки
+          </td><td>0106300010516000162</td></tr><tr><td width="300px">
+            Наименование объекта закупки
+          </td><td>Приобретение благоустроенного жилого помещения (трехкомнатной квартиры) в целях исполнения решения Петрозаводского городского суда Республики Карелия по предоставлению гражданам жилого помещения.</td></tr><tr><td width="300px">
+            Адрес электронной площадки
+          </td><td>              http://www.sberbank-ast.ru
+            </td></tr><tr><td width="300px">
+            Дата и время проведения аукциона
+          </td><td>2016-09-0510:05</td></tr><tr><td width="300px">
+            Начальная (максимальная) цена контракта
+          </td><td></td></tr><tr><td width="300px">
+            Место поставки товара, выполнения работ, оказания услуг
+          </td><td></td></tr></table><br/><table class="dt" width="900px"><tr><td class="th" colspan="2">
+            Заявка на участие в аукционе
+          </td></tr><tr><td width="300px">
+            Порядковый номер заявки
+          </td><td>1</td></tr><tr><td width="300px">
+            Защищенный номер заявки
+          </td><td></td></tr></table><br/><table class="dt" width="900px"><tr><td class="th">
+						Причина отказа
+					</td></tr><tr><td>В соответствии с п.1 ч.4 ст.67 Федерального закона от 05.04.2013 № 44-ФЗ "О контрактной системе в сфере закупок товаров, работ, услуг для обеспечения государственных и муниципальных нужд" (далее - Закон), Единой комиссией принято следующее решение: отказать в допуске участнику закупки с порядковым номером 1 к участию в аукционе в электронной форме в связи с непредоставлением информации, предусмотренной частью 3 статьи 66 Закона, пунктом 3.2.2 «Требования к заявке на участие в аукционе и документам, входящим в состав заявки на участие в аукционе» раздела 1 документации об аукционе в электронной форме, согласно которым первая часть заявки на участие в аукционе должна содержать конкретные показатели, соответствующие значениям, установленным в разделе 3 « Техническое задание» документации об аукционе. В заявке участника закупки конкретные показатели предлагаемого к поставке товара отсутствуют.</td></tr></table><br/></div><table><tr><td><b>Данные подписи</b></td></tr></table><table class='dt'><tr><td class='fr'>Владелец сертификата</td><td>Ахметова Светлана Анатольевна</td></tr><tr><td class='fr'>Организация</td><td>ЗАО «Сбербанк-АСТ»</td></tr><tr><td class='fr'>Город</td><td>Москва</td></tr><tr><td class='fr'>Страна</td><td>RU</td></tr><tr><td class='fr'>E-mail</td><td>info@sberbank-ast.ru</td></tr></table><br></body></html>

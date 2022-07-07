@@ -1,0 +1,82 @@
+
+HOME             = /usr/local/www/priemnaya/admin/protected/data/CA
+RANDFILE         = /usr/local/www/priemnaya/admin/protected/data/CA/.rnd
+dir	             = /usr/local/www/priemnaya/admin/protected/data/CA
+certs            = /usr/local/www/priemnaya/admin/protected/data/CA/certs
+crl_dir	         = /usr/local/www/priemnaya/admin/protected/data/CA/crl
+database         = /usr/local/www/priemnaya/admin/protected/data/CA/index
+new_certs_dir    = /usr/local/www/priemnaya/admin/protected/data/CA/newcerts
+private_dir      = /usr/local/www/priemnaya/admin/protected/data/CA/private
+serial           = /usr/local/www/priemnaya/admin/protected/data/CA/serial
+certificate      = /usr/local/www/priemnaya/admin/protected/data/CA/cacert.pem
+crl              = /usr/local/www/priemnaya/admin/protected/data/CA/crl/cacrl.pem
+private_key      = /usr/local/www/priemnaya/admin/protected/data/CA/cakey.pem
+crl_extentions	 = crl_ext
+default_days     = 365
+default_crl_days = 30
+preserve         = no
+default_md       = md5
+
+[ req ]
+default_bits        = 1024
+string_mask         = nombstr
+prompt              = no
+distinguished_name  = req_name
+req_extensions      = req_ext
+
+[ req_name ]
+C=RU
+ST=Karelia
+L=Petrozavodsk
+0.O=Administration of Petrozavodsk
+OU=IT
+CN=Fedor Stafeev
+emailAddress=fedor.stafeev@petrozavodsk-mo.ru
+
+[ ca ]
+default_ca             = email_cert
+
+[ email_cert ]
+x509_extensions        = email_ext
+default_days           = 365
+policy                 = policy_supplied
+
+[ server_cert ]
+x509_extensions        = server_ext
+default_days           = 1095
+policy                 = policy_supplied
+
+[ policy_supplied ]
+countryName            = supplied
+stateOrProvinceName    = supplied
+localityName           = supplied
+organizationName       = supplied
+organizationalUnitName = supplied
+commonName             = supplied
+emailAddress           = supplied
+
+[ req_ext]
+basicConstraints = CA:false
+
+[ crl_ext ]
+issuerAltName=issuer:copy
+authorityKeyIdentifier=keyid:always,issuer:always
+
+[ email_ext ]
+basicConstraints       = critical, CA:false
+keyUsage               = critical, nonRepudiation, digitalSignature, keyEncipherment
+extendedKeyUsage       = critical, emailProtection, clientAuth
+nsCertType             = critical, client, email
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid:always, issuer:always
+subjectAltName         = email:copy
+issuerAltName          = issuer:copy
+
+[ server_ext ]
+basicConstraints        = critical, CA:false
+keyUsage                = critical, digitalSignature, keyEncipherment
+nsCertType              = critical, server
+extendedKeyUsage        = critical, serverAuth
+subjectKeyIdentifier    = hash
+authorityKeyIdentifier  = keyid:always, issuer:always
+issuerAltName           = issuer:copy

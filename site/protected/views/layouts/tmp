@@ -1,0 +1,15 @@
+<?php
+function cmp($a, $b)
+{
+    return strcmp($a["count"], $b["count"]);
+}
+?>
+
+<pre>
+<?php
+$tags = Question::model()->getAllTagsWithModelsCount();
+usort($tags,"cmp");
+ksort($tags);
+print_r($tags);
+?>
+</pre>

@@ -1,0 +1,102 @@
+/*
+
+  (c) Mediaweb Studio
+
+*/
+
+/* common */
+html, img, form {margin: 0px; padding: 0px; border: none;}
+body {padding:10px; background-color: #fff;}
+body, td {font:13px "Trebuchet MS", Helvetica, sans-serif; color: #000;}
+a {color: #005190;	text-decoration: underline;}
+a:hover {text-decoration: none;}
+table {border: 0px; border-collapse: collapse;}
+td {vertical-align: top;}
+p {padding: 0px; margin: 0px 0px 12px 0px;}
+object {outline:none;}
+small {font-size: 11px;}
+
+h1 {font-size:20px; padding: 0px; margin: 0px 0px 10px 0px;}
+h2 {font-size:15px; padding: 0px; margin: 0px 0px 10px 0px; font-style: italic; color:#194566;}
+h3 {font-size:16px; padding: 0px; margin: 0px 0px 10px 0px; color:#194566;}
+h3.error {margin-bottom:0; text-transform: uppercase; color:#B83939;}
+
+.clear {clear:both;}
+.none {line-height:0;}
+.relative {width:100%; position:relative;}
+.img-marg {float:left; margin:0 10px 5px 0;}
+.float-l {float:left;}
+.float-r {float:right;}
+.separator {height:10px; border-bottom:1px solid #888; margin-bottom:10px;}
+.red, span.required {color:#DE0000;}
+.red2 {color:#B83939;}
+.green {color:#1F7700;}
+.gray {color:#4F4F4F;}
+
+.main-cont {width:100%;}
+
+.header {margin:20px 0; text-align: center;}
+
+.main-menu,
+.mp-buttons,
+.left-col,
+.center-col form,
+.quest-icn
+{display:none;}
+
+.conteiner1 {width:100%;}
+
+.mp-cont,
+.mp-cont2 {margin:10px 0;}
+
+
+/* data table */
+.table1 {width:100%; margin:10px 0 20px 0;}
+.table1 th, .table1 td {padding:3px 10px; border:1px solid #fff}
+.table1 th, .table1 thead td {color:#fff; background-color: #1B496B;}
+.table1 td {background-color: #DAEFF8;}
+.table1 tbody tr:nth-child(even) td {background-color: #B7DCED;}
+
+.center-col {width:100%;}
+
+/* attach */
+.attach {padding:0; margin:0 0 25px 0; list-style-type: none;}
+.attach li {padding:0 0 0 60px; margin:10px 0; font-size: 14px;}
+.attach a {color:#1E7700;}
+.attach span {font-size:11px; color:#6A6A6A;}
+.attach span a {color:#005190;}
+.attach li.doc {background: url(../img/icn_doc.gif) 24px 4px no-repeat;}
+.attach li.xls {background: url(../img/icn_xls.gif) 24px 4px no-repeat;}
+.attach li.pdf {background: url(../img/icn_pdf.gif) 24px 4px no-repeat;}
+.attach li.zip, .attach li.rar {background: url(../img/icn_zip.gif) 24px 4px no-repeat;}
+.attach li.jpg {background: url(../img/icn_jpg.gif) 24px 4px no-repeat;}
+.attach li.link {background: url(../img/icn_link.gif) 24px 4px no-repeat;}
+.attach li.link a {font-weight: bold; color:#005190; font-size: 13px;}
+
+/* gallery */
+.gallery {margin:20px 0;}
+.gallery table {width: 100%;}
+.gallery td {width:25%; padding:5px;; text-align: center; font-size: 12px; color:#6A6A6A;}
+.gallery img {border:4px solid #B7DCED; /*border-radius: 3px; -o-border-radius:3px; -moz-border-radius: 3px; -webkit-border-radius: 3px; -khtml-border-radius: 3px;*/}
+.gallery div {padding:5px 0 0 0; line-height:1.2;}
+
+/* request-search */
+.request-search {width:575px; height:47px; margin:0 0 20px 0; overflow: hidden; background: url(../img/search_bg_a.gif) left top no-repeat #F2ECCB; vertical-align: middle;}
+.request-search-b {height:23px; padding:12px; background: url(../img/search_bg_b.gif) right top no-repeat;}
+.request-search * {vertical-align: middle;}
+.request-search img.ui-datepicker-trigger {margin-left:2px; cursor: pointer;}
+.request-search h2 {display: inline; margin:0;}
+.request .item {padding:0 0 4px 0; margin:0 0 15px 0; border-bottom:1px solid #888;}
+.request .item .head {margin:0 0 5px 0; font-size: 11px;}
+.request .item .head h3 {display: inline; font-size: 13px; color:#194566;}
+.request .item .desc {padding:0 0 8px 25px;}
+.request .item .more-link {font-size: 11px; line-height:2;}
+.request .keywords, .request .answer {width:575px; background: #E2F1F7 url(../img/tags_bg_a.gif) left top no-repeat;}
+.request .keywords {font-size: 10px;}
+.request .keywords-b, .request .answer-b {padding:10px 25px; background: url(../img/tags_bg_b.gif) left bottom no-repeat;}
+.request .keywords h4, .request .answer h4 {margin:0 0 5px 0; font-weight: normal; font-size:13px; color:#005190;}
+
+
+.footer {margin:20px 0; padding:10px 0; border-top:1px solid #888;}
+.mw-copy {display:none;}
+

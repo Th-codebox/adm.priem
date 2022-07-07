@@ -1,0 +1,407 @@
+<?php
+
+class SiteController extends Controller
+{
+	/**
+	 * Declares class-based actions.
+	 */
+	public function actions()
+	{
+		return array(
+			// captcha action renders the CAPTCHA image displayed on the contact page
+			'captcha'=>array(
+				'class'=>'CCaptchaAction',
+				'backColor'=>0xFFFFFF,
+				'testLimit'=>2,
+			),
+			// page action renders "static" pages stored under 'protected/views/site/pages'
+			// They can be accessed via: index.php?r=site/page&view=FileName
+			'page'=>array(
+				'class'=>'CViewAction',
+			),
+		);
+	}
+
+	/**
+	 * This is the default 'index' action that is invoked
+	 * when an action is not explicitly requested by users.
+	 */
+
+	public function actionIndex()
+	{
+		$last_question=Question::model()->find(array('condition'=>'SYSTEM_STATUS=5 and STATUS=1','order'=>'PUBLISH_TIME desc'));
+
+		$this->layout="index";
+		$this->render('index',array(
+			'last_question'=>$last_question,
+			'page'=>Page::model()->findbyPk(3)
+		));
+	}
+
+	public function actionInfo()
+	{
+		$this->render('info',array(
+			'page'=>Page::model()->findbyPk(5)
+		));
+	}
+
+	public function actionViewquestion()
+	{
+		$view = 0;
+		
+		if (isset($_GET['id']) && intval($_GET['id']) > 0)
+		{
+			$question = Question::model()->find(array('condition'=>'SYSTEM_STATUS=5 and STATUS=1 and ID='.$_GET['id']));
+			if ($question->ID) {
+				$view = 1;
+			}
+		}
+		else {
+			$question = array();
+		}
+
+		$this->render('viewquestion',array(
+			'question'=>$question,
+			'view'=>$view
+		));
+	}
+
+	public function actionAnswer()
+	{
+		// renders the view file 'protected/views/site/index.php'
+		// using the default layout 'protected/views/layouts/main.php'
+		$model = new AnswerForm;
+
+		if(isset($_POST['AnswerForm'])) {
+			$model->attributes=$_POST['AnswerForm'];
+			if($model->validate()) {
+				$filter = "`ID` = :id and `USER_PASSWORD` = :password";
+				$cnt=Question::model()->countBySql("select count(ID) from QUESTIONS where ".$filter,array(':id'=>substr($model->ID,4,strlen($model->ID)-4),':password'=>$model->PASSWORD)) || 0;
+				$questions=Question::model()->findAll(
+					array(
+						'condition'=>$filter,
+						'params'=>array(
+									':id'=>substr($model->ID,4,strlen($model->ID)-4),
+									':password'=>$model->PASSWORD
+									)
+                )
+				);
+    		}
+			else {
+				$cnt = -1;
+				$questions = array();
+			}
+    	}
+		else {
+			$cnt = -1;
+			$questions = array();
+		}
+		$this->render('answer',array('model'=>$model,'cnt'=>$cnt,'questions'=>$questions));
+	}
+
+
+	public function actionStatistika()
+	{
+		$model = new SearchQuestionForm;
+
+		#if(isset($_GET['SearchQuestionForm'])) {
+		if(isset($_POST['SearchQuestionForm'])) {
+			$model->attributes=$_POST['SearchQuestionForm'];
+			if($model->validate()) {
+
+			    $filter = array();
+				$params = array();
+
+				array_push($filter,"`STATUS`=1 and `SYSTEM_STATUS`=5"); 
+
+				if ($model->DT1) {
+			        array_push($filter,"DATE(`PUBLISH_TIME`) >= :date1"); 
+					$params[':date1'] = join('-', array_reverse(explode('.', $model->DT1)));
+				}
+				if ($model->DT2) {
+			        array_push($filter,"DATE(`PUBLISH_TIME`) <= :date2"); 
+					$params[':date2'] = join('-', array_reverse(explode('.', $model->DT2)));
+				}
+				if ($model->RUBR) {
+			        array_push($filter,"`RUBR` = :rubr"); 
+					$params[':rubr'] = $model->RUBR;
+				}
+
+				$criteria=new CDbCriteria;
+				$criteria->condition=join(' and ', $filter);
+				$criteria->params=$params;
+				#$pages = new CPagination(Question::model()->count($criteria));
+		                #$pages->pageSize=Yii::app()->params['pageSize'];
+ 		    	        #$pages->applyLimit($criteria);
+ 		    	        $questions = Question::model()->findAll($criteria);
+				$amount = Question::model()->count($criteria);	
+			}
+			else {
+				$questions = array();
+				$amount = 0;
+			}
+		}
+		else {
+			$questions = array();
+			$amount = 0;
+		}
+        	$rubrs = CHtml::listData(Section::model()->findAll('ACTIVE="Y"'), 'ID', 'NAME');
+		$rubrs['']='';
+		ksort($rubrs);
+
+		$this->render('statistika',array(
+								'model'=>$model,
+								'rubrs'=>$rubrs,
+								'questions'=>$questions,
+								'amount'=>$amount,
+								#'pages'=>$pages
+					));
+	}
+
+
+	public function actionCategories()
+	{
+        $model = new FilterQuestionForm;
+
+		$filter = array();
+		$params = array();
+
+		if (isset($_POST['FilterQuestionForm'])) {
+			$model->attributes=$_POST['FilterQuestionForm'];
+			if($model->validate()) {
+				if ($model->DT1) {
+			        	array_push($filter,"DATE(`PUBLISH_TIME`) >= :date1"); 
+					$params[':date1'] = join('-', array_reverse(explode('.', $model->DT1)));
+				}
+				if ($model->DT2) {
+				        array_push($filter,"DATE(`PUBLISH_TIME`) <= :date2"); 
+					$params[':date2'] = join('-', array_reverse(explode('.', $model->DT2)));
+				}
+			} 
+		} 
+
+		if (isset($_GET['id']) && intval($_GET['id']) > 0) {
+		        array_push($filter,"`RUBR` = :id"); 
+			$params[':id']=$_GET['id'];
+			$category=Section::model()->find(array('condition'=>'ID='.$_GET['id']));
+                }
+		else {
+			$category = array();
+		}
+
+		$sections=Section::model()->findAll(array('condition'=>'ACTIVE="Y"','order'=>'MORDER'));
+	        array_push($filter,"`STATUS`=1 and `SYSTEM_STATUS`=5"); 
+
+		$criteria=new CDbCriteria;
+		$criteria->condition=join(' and ', $filter);
+		$criteria->params=$params;
+		#$pages = new CPagination(Question::model()->count($criteria));
+                #$pages->pageSize=Yii::app()->params['pageSize'];
+    	        #$pages->applyLimit($criteria);
+                
+                $questions = (count($filter) == 1) ? array() : Question::model()->findAll($criteria);
+		$amount = Question::model()->count($criteria);	
+
+		$this->render('categories',array(
+			'questions'=>$questions,
+			'category'=>$category,
+			'id'=>$_GET['id'],
+			'sections'=>$sections,
+			'model'=>$model,
+			#'pages'=>$pages
+		));
+
+	}
+
+	public function actionFindquestions()
+	{
+		if(isset($_GET['keyword'])) {
+			$criteria=new CDbCriteria;
+			$criteria->condition='SYSTEM_STATUS=5 and STATUS=1';
+			$criteria->order='PUBLISH_TIME desc';
+			$pages = new CPagination(Question::model()->taggedWith($_GET['keyword'])->count($criteria));
+            $pages->pageSize=Yii::app()->params['pageSize'];
+            $pages->applyLimit($criteria);
+			$questions=Question::model()->taggedWith($_GET['keyword'])->findAll($criteria);
+		}
+		else {
+			$questions = array();
+		}
+
+		$this->render('findquestions', array(
+			'questions'=>$questions,
+			'pages'=>$pages
+		));
+	}
+
+	public function actionQuestions()
+	{
+		$last_questions=Question::model()->findAll(array('condition'=>'SYSTEM_STATUS=5 and STATUS=1','order'=>'PUBLISH_TIME desc','limit'=>3));
+
+		$this->render('questions',array('last_questions'=>$last_questions));
+	}
+
+	public function actionAbout()
+	{
+		$this->render('page', array('page'=>Page::model()->findbyPk(1)));
+	}
+
+
+	public function actionFaq()
+	{
+		$this->render('page', array('page'=>Page::model()->findbyPk(2)));
+	}
+
+	/**
+	 * This is the action to handle external exceptions.
+	 */
+	public function actionError()
+	{
+	    if($error=Yii::app()->errorHandler->error)
+	    {
+	    	if(Yii::app()->request->isAjaxRequest)
+	    		echo $error['message'];
+	    	else
+	        	$this->render('error', $error);
+	    }
+	}
+
+	/**
+	 * Displays the contact page
+	 */
+	public function actionContact()
+	{
+		$model=new Question;
+
+		if (isset($_POST['agree'])) {
+			if ($_POST['agree'] != 1) {
+				$this->redirect('/site/info');
+				Yii::app()->end();
+			}
+		
+
+	        $rubrs = CHtml::listData(Section::model()->findAll('ACTIVE="Y"'), 'ID', 'NAME');
+			$rubrs['']='';
+			ksort($rubrs);
+
+	        $members = CHtml::listData(Members::model()->findAll('active=1'), 'id', 'name');
+			$members['']='';
+			ksort($members);
+			
+			$members_list = Members::model()->findAll('active=1');
+
+			$err = "";
+			$files = array();
+
+			if (isset($_POST['Question'])) {
+YiiBase::beginProfile('question');
+				$model->attributes=$_POST['Question'];
+				$model->verifyCode=$_POST['verifyCode'];
+
+				$model->scenario = 'create';
+
+				$is_file_upload = 0;
+
+YiiBase::beginProfile('validate');
+				if ($model->validate()) {
+					for ($i=0; $i<count($_FILES['file']['name']); $i++) {
+						if (!$_FILES['file']['name'][$i]) continue;
+						
+		  				$size = round($_FILES['file']['size'][$i]/1024);
+  						if ($size > 2048) {
+							$model->addError('files',sprintf('Файл %s превышает допустимый размер 2мб',$_FILES['file']['name'][$i]));
+  						}
+						
+  						$type = substr($_FILES['file']['name'][$i], strrpos($_FILES['file']['name'][$i],'.')+1);
+  						$exts = array('jpg','jpeg','gif','png','bmp','tif','tiff','rtf','doc','xls','odf','ods','txt','pdf','zip','rar','7z');
+  					
+  						if (!in_array($type,$exts)) {
+							$model->addError('files',sprintf('Неверный тип файла %s: %s, используйте только один из типов: %s',$_FILES['file']['name'][$i], $type, join(',', $exts)));
+						}
+						$files[]= array('SIZE'=>$size, 'TYPE'=>$type, 'NAME'=>$_FILES['file']['name'][$i], 'tmpName'=>$_FILES['file']['tmp_name'][$i]);
+  					}
+				}
+YiiBase::endProfile('validate');
+			
+				if (!$model->hasErrors()) {
+					$model->CREATE_TIME = new CDbExpression('NOW()');
+                  	$model->USER_PASSWORD = substr(md5(rand().rand()), 0, 8); 
+
+					if ($model->save()) {
+YiiBase::beginProfile('saveFile');
+						foreach ($files as $file) {
+							$fileModel = new Files;
+							$fileModel->setAttributes($file);
+							$fileModel->QUESTION = $model->ID;
+							if (!$fileModel->validate() || !$fileModel->save()) {
+								$model->delete();
+								$model->addError('files','Ошибка сохранения файла, попробуйте позже');
+								break;
+							}
+							if (!$fileModel->saveFile($file['tmpName'])) {
+								$model->delete();
+								$model->addError('files','Ошибка сохранения файла, попробуйте позже');
+								$fileModel->delete();
+								break;
+							}
+						}
+YiiBase::endProfile('saveFile');
+						if (!$model->hasErrors()) {
+							$admin_email = Yii::app()->params["adminEmail"];
+							$headers = "From: {$admin_email}\r\nReply-To: {$admin_email}\r\nContent-type: text/html; charset=utf-8\r\n";
+							$text = $this->renderPartial('mail',array('model'=>$model),true);
+							
+							mail(Yii::app()->params['adminEmail'], Yii::app()->params['EmailSubject'], $text, $headers);
+YiiBase::beginProfile('sendMail');
+							if ($model->EMAIL) {
+							   $clientText = $this->renderPartial('client',array('model'=>$model),true);
+							   mail($model->EMAIL, Yii::app()->params['EmailClientSubject'], $clientText, $headers);
+							}  
+YiiBase::endProfile('sendMail');
+							$this->render('question_send',array('model'=>$model));
+YiiBase::endProfile('question');
+							return;
+						}
+					}
+				}
+			}
+
+			if($captcha=Yii::app()->getController()->createAction('captcha'))
+			{
+				$captcha->getVerifyCode(true);
+			}
+			$this->render('contact',array('model'=>$model,'rubrs'=>$rubrs,'members'=>$members,'err'=>$err,'members_list'=>$members_list));
+		}
+		else {
+			$this->render('pravila',array('page'=>Page::model()->findbyPk(4)));
+		}
+YiiBase::endProfile('question');
+	}
+
+	/**
+	 * Displays the login page
+	 */
+	public function actionLogin()
+	{
+		$model=new LoginForm;
+		// collect user input data
+		if(isset($_POST['LoginForm']))
+		{
+			$model->attributes=$_POST['LoginForm'];
+			// validate user input and redirect to the previous page if valid
+			if($model->validate())
+				$this->redirect(Yii::app()->user->returnUrl);
+		}
+		// display the login form
+		$this->render('login',array('model'=>$model));
+	}
+
+	/**
+	 * Logs out the current user and redirect to homepage.
+	 */
+	public function actionLogout()
+	{
+		Yii::app()->user->logout();
+		$this->redirect(Yii::app()->homeUrl);
+	}
+}

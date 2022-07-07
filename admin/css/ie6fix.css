@@ -1,0 +1,17 @@
+
+
+.main-cont, .footer {width:expression(
+document.documentElement.offsetWidth < 995
+  ? "995px"
+  : "100%");
+}
+
+.ie6hide {display: none;}
+.login-cont {height:100%;}
+
+.main-menu a {height:10px;}
+.center-col .padding {height:400px;}
+.main-menu {height:250px;}
+.data-table .dd-menu ul {height:120px;}
+.data-table .dd-menu ul a {height:10px;}
+

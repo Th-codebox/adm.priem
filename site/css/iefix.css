@@ -1,0 +1,19 @@
+
+
+.ie6hide {display: none;}
+.main-cont {height:100%;}
+
+.mp-center-col .padding {height:500px;}
+
+.mp-cont-e {background:none; filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/img/mp_cont_e.png',sizingMethod='crop');}
+.mp-cont2-f {background: none; filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/img/mp_cont2_e.png',sizingMethod='crop');}
+.mp-cont-c {height:160px;}
+.mp-cont2-d {height:135px;}
+.mp-cont2-b {background: none; filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/img/page.png',sizingMethod='crop');}
+.mp-cont2-b a {position: relative;}
+
+/* IE6 IFRAME FIX (taken from datepicker 1.5.3 */
+.ui-helper-clearfix { height:1%; }
+.ui-datepicker-cover {display: none; display: block; position: absolute; z-index: -1; filter: mask(); top: -4px; left: -4px; width: 200px; height: 200px;}
+
+
